@@ -140,35 +140,31 @@ fractions fractions::_reduce(fractions& res) const{
     }
   return result; 
 }
-void fractions::operator== (const fractions& dr) const{
-  if(arr[1] * dr.arr[1] != 0){
-    if ((arr[0] * dr.arr[1]) < (dr.arr[0] * arr[1])){
-      std::cout << "Первая дробь меньше\n";
-    }
-    else if ((arr[0] * dr.arr[1]) > (dr.arr[0] * arr[1])){
-      std::cout << "Первая дробь больше\n";
-    }
-    else{
-      std::cout << "Дроби равны\n";
-    }
-  }
+bool fractions::operator> (const fractions& dr) const{
+  if(arr[1] * dr.arr[1] != 0)
+    return ((arr[0] * dr.arr[1]) > (dr.arr[0] * arr[1]));
   else{
-    if(arr[1] == dr.arr[1]){
-      std::cout << "Дроби равны\n";
-    }
-    if(arr[1] == 0 && dr.arr[1] != 0){
-      if(dr.arr[0] > 0)
-	std::cout << "Первая дробь меньше\n";
-      else
-	std::cout << "Первая дробь больше\n";
-    }
-    if(arr[1] != 0 && dr.arr[1] == 0){
-      if(arr[0] < 0)
-	std::cout << "Первая дробь меньше\n";
-      else
-	std::cout << "Первая дробь больше\n";
-    }
+    if(arr[1] == 0 && dr.arr[1] != 0)
+      return (dr.arr[0] < 0);
+    else 
+      return (arr[0] > 0);
   }
+}
+bool fractions::operator< (const fractions& dr) const{
+  if(arr[1] * dr.arr[1] != 0)
+    return ((arr[0] * dr.arr[1]) < (dr.arr[0] * arr[1]));
+  else{
+    if(arr[1] == 0 && dr.arr[1] != 0)
+      return (dr.arr[0] > 0);
+    else
+      return (arr[0] < 0);
+  }
+}
+bool fractions::operator== (const fractions& dr) const{
+  if(arr[1] * dr.arr[1] != 0)
+    return ((arr[0] * dr.arr[1]) == (dr.arr[0] * arr[1]));
+  else
+    return (arr[1] == dr.arr[1]);
 }
 
 fractions operator ""_d(const char* str, size_t size){   //[5:9]

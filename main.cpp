@@ -20,7 +20,12 @@ int main() {
   std::cout << f * f1 << std::endl;
   std::cout << "Частное\n";
   std::cout << f / f1 << std::endl;
-  f == f1;
+  if(f > f1)
+    std::cout << "Первая дробь больше\n";
+  if(f < f1)
+    std::cout << "Первая дробь меньше\n";
+  if(f == f1)
+    std::cout << "Дроби равны\n";
   fractions f3;
   f3 = "[5:9]"_d;
   std::cout << f3 << std::endl;

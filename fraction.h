@@ -19,7 +19,9 @@ struct fractions{
   fractions operator* (const fractions& dr) const;
   fractions operator/ (const fractions& dr) const;
   fractions _reduce (fractions& res) const;
-  void operator== (const fractions& dr) const;
+  bool operator> (const fractions& dr) const;
+  bool operator< (const fractions& dr) const;
+  bool operator== (const fractions& dr) const;
   friend std::istream& operator>> (std::istream& in, fractions& dr);
   friend std::ostream& operator<< (std::ostream& out, const fractions& dr);	
 

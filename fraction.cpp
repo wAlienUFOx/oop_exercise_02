@@ -1,29 +1,16 @@
 #include "fraction.h"
 #include <cstring>
 #include <sstream>
+#include <algorithm>
 
 fractions::fractions(): arr{0, 0} {}
 fractions::fractions(int a, int b): arr{a, b} {}
-
-int fractions::get(int i){
-  return arr[i];
-}
-void fractions::set(int i){
-  std::cin >> arr[i];
-}
 
 fractions& fractions::operator+= (const fractions& dr){
   fractions tmp;
   tmp.arr[0] = (arr[0] * dr.arr[1]) + (arr[1] * dr.arr[0]);
   tmp.arr[1] = arr[1] * dr.arr[1];
-  if(arr[1] == 0){
-    tmp.arr[0] = dr.arr[0];
-    tmp.arr[1] = dr.arr[1];
-  }
-  if(dr.arr[1] == 0){
-    tmp.arr[0] = arr[0];
-    tmp.arr[1] = arr[1];
-  }
+  tmp._reduce();
   arr[0] = tmp.arr[0];
   arr[1] = tmp.arr[1];
   return *this;
@@ -32,29 +19,25 @@ fractions& fractions::operator-= (const fractions& dr){
   fractions tmp;
   tmp.arr[0] = (arr[0] * dr.arr[1]) - (arr[1] * dr.arr[0]);
   tmp.arr[1] = arr[1] * dr.arr[1];
-  if(arr[1] == 0){
-    tmp.arr[0] = -dr.arr[0];
-    tmp.arr[1] = dr.arr[1];
-  }
-  if(dr.arr[1] == 0){
-    tmp.arr[0] = arr[0];
-    tmp.arr[1] = arr[1];
-  }
+  tmp._reduce();
   arr[0] = tmp.arr[0];
   arr[1] = tmp.arr[1];
   return *this;
 }
 fractions& fractions::operator*= (const fractions& dr){
-  for(int i = 0; i < 2; i++)
-    {
-      this->arr[i] = arr[i] * dr.arr[i];
-    }
+  fractions tmp;
+  tmp.arr[0] = arr[0] * dr.arr[0];
+  tmp.arr[1] = arr[1] * dr.arr[1];
+  tmp._reduce();
+  arr[0] = tmp.arr[0];
+  arr[1] = tmp.arr[1];
   return *this;
 }
 fractions& fractions::operator/= (const fractions& dr){
   fractions tmp;
   tmp.arr[0] = arr[0] * dr.arr[1];
   tmp.arr[1] = arr[1] * dr.arr[0];
+  tmp._reduce();
   arr[0] = tmp.arr[0];
   arr[1] = tmp.arr[1];
   return *this;
@@ -63,108 +46,37 @@ fractions& fractions::operator/= (const fractions& dr){
 fractions fractions::operator+ (const fractions& dr) const{
   fractions result = *this;
   result += dr;
-  result._reduce(result);
   return result;  
 }
 fractions fractions::operator- (const fractions& dr) const{
   fractions result = *this;
   result -= dr;
-  result._reduce(result);
   return result;
 }
 fractions fractions::operator* (const fractions& dr) const{
   fractions result = *this;
   result *= dr;
-  result._reduce(result);
   return result;
 }
 fractions fractions::operator/ (const fractions& dr) const{
   fractions result = *this;
   result /= dr;
-  result._reduce(result);
   return result;
 }
-fractions fractions::_reduce(fractions& res) const{
-  fractions result{};
-  if(res.arr[1] == 0)
-    res.arr[0] = 0;
-  if(res.arr[0] == 0)
-    res.arr[1] =0;
-  if(res.arr[0] >= res.arr[1])
-    {
-      if(res.arr[1] > 0){
-	for(int i = res.arr[1]; i > 1; i--)
-	  {
-	    if(res.arr[0] % i == 0 && res.arr[1] % i == 0)
-	      {
-		res.arr[0] = res.arr[0] / i;
-		res.arr[1] = res.arr[1] / i;
-	      }
-	  }
-      }
-      else{
-	for(int i = res.arr[1]; i < -1; i++)
-	  {
-	    if(res.arr[0] % i == 0 && res.arr[1] % i == 0)
-	      {
-		res.arr[0] = res.arr[0] / (-i);
-		res.arr[1] = res.arr[1] / (-i);
-	      }
-	  }
-      }
-    }
-  
-  if (res.arr[0] < res.arr[1])
-    {
-      if(res.arr[0] > 0)
-	{
-	  for(int i = res.arr[0]; i > 1; i--)
-	    {
-	      if(res.arr[0] % i == 0 && res.arr[1] % i == 0)
-		{
-		  res.arr[0] = res.arr[0] / i;
-		  res.arr[1] = res.arr[1] / i;
-		}
-	    }
-	}
-      else{
-	for(int i = res.arr[0]; i < -1; i++)
-	    {
-	      if(res.arr[0] % i == 0 && res.arr[1] % i == 0)
-		{
-		  res.arr[0] = res.arr[0] / (-i);
-		  res.arr[1] = res.arr[1] / (-i);
-		}
-	    }
-      }
-    }
-  return result; 
+fractions fractions::_reduce() {
+  int g = std::__gcd(arr[0], arr[1]);
+  arr[0] /= g;
+  arr[1] /= g; 
+  return *this;
 }
 bool fractions::operator> (const fractions& dr) const{
-  if(arr[1] * dr.arr[1] != 0)
-    return ((arr[0] * dr.arr[1]) > (dr.arr[0] * arr[1]));
-  else{
-    if(arr[1] == 0 && dr.arr[1] != 0)
-      return (dr.arr[0] < 0);
-    else 
-      return (arr[0] > 0);
-  }
+  return ((arr[0] * dr.arr[1]) > (dr.arr[0] * arr[1]));
 }
 bool fractions::operator< (const fractions& dr) const{
-  if(arr[1] * dr.arr[1] != 0)
-    return ((arr[0] * dr.arr[1]) < (dr.arr[0] * arr[1]));
-  else{
-    if(arr[1] == 0 && dr.arr[1] != 0)
-      return (dr.arr[0] > 0);
-    else
-      return (arr[0] < 0);
-  }
+  return ((arr[0] * dr.arr[1]) < (dr.arr[0] * arr[1]));
 }
 bool fractions::operator== (const fractions& dr) const{
-  if(arr[1] * dr.arr[1] != 0)
-    return ((arr[0] * dr.arr[1]) == (dr.arr[0] * arr[1]));
-  else
-    return (arr[1] == dr.arr[1]);
+  return ((arr[0] * dr.arr[1]) == (dr.arr[0] * arr[1]));
 }
 
 fractions operator ""_d(const char* str, size_t size){   //[5:9]

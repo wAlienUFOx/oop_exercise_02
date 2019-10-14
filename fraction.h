@@ -7,9 +7,6 @@ struct fractions{
   fractions();
   fractions(int a, int b);
 
-  int get(int i);
-  void set(int i);
-
   fractions& operator+= (const fractions& dr);
   fractions& operator-= (const fractions& dr);
   fractions& operator*= (const fractions& dr);
@@ -18,7 +15,7 @@ struct fractions{
   fractions operator- (const fractions& dr) const;
   fractions operator* (const fractions& dr) const;
   fractions operator/ (const fractions& dr) const;
-  fractions _reduce (fractions& res) const;
+  fractions _reduce ();
   bool operator> (const fractions& dr) const;
   bool operator< (const fractions& dr) const;
   bool operator== (const fractions& dr) const;
